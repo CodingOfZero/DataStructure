@@ -1,22 +1,22 @@
 /*
-*Õ»»ìÏ´
-*Ó¦ÓÃ£ºÁĞ³µµ÷¶È 
+*æ ˆæ··æ´—
+*åº”ç”¨ï¼šåˆ—è½¦è°ƒåº¦ 
 *	In this station, A is the entrance for each train and B is the exit. S is the transfer end. All single tracks are one-way, 
 *which means that the train can enter the station from A to S, and pull out from S to B. Note that the overtaking is not allowed.
 *Because the compartments can reside in S, the order that they pull out at B may differ from that they enter at A.
 *However, because of the limited capacity of S, no more that m compartments can reside at S simultaneously.
-*	Assume that a train consist of n compartments labeled {1, 2, ¡­, n}. A dispatcher wants to know whether these compartments can pull out at B in the order of {a1, a2, ¡­, an} (a sequence). 
+*	Assume that a train consist of n compartments labeled {1, 2, â€¦, n}. A dispatcher wants to know whether these compartments can pull out at B in the order of {a1, a2, â€¦, an} (a sequence). 
 *If can, in what order he should operate it?
 *Input
 	Two lines:
 		1st line: two integers n and m;
-		2nd line: n integers separated by spaces, which is a permutation of {1, 2, ¡­, n}. This is a compartment sequence that is to be judged regarding the feasibility.
+		2nd line: n integers separated by spaces, which is a permutation of {1, 2, â€¦, n}. This is a compartment sequence that is to be judged regarding the feasibility.
 Output
-	If the sequence is feasible, output the sequence. ¡°Push¡± means one compartment goes from A to S,
-	while ¡°pop¡± means one compartment goes from S to B. Each operation takes up one line.
-	If the sequence is infeasible, output a ¡°no¡±.
+	If the sequence is feasible, output the sequence. â€œPushâ€ means one compartment goes from A to S,
+	while â€œpopâ€ means one compartment goes from S to B. Each operation takes up one line.
+	If the sequence is infeasible, output a â€œnoâ€.
 * 
-*2018Äê7ÔÂ13ÈÕ 21:23:21 
+*2018å¹´7æœˆ13æ—¥ 21:23:21 
 */
 #include<iostream>
 #include<stack>
@@ -24,7 +24,7 @@ Output
 #include<queue>
 using std::stack;using std::cout;using std::cin;using std::endl;
 template<typename T>
-void stack_reverse(std::stack<T> &s){	//Õ»·­×ª 
+void stack_reverse(std::stack<T> &s){	//æ ˆç¿»è½¬ 
 	std::queue<T> t;
 	while(!s.empty())
 	{
@@ -39,26 +39,26 @@ void stack_reverse(std::stack<T> &s){	//Õ»·­×ª
 } 
 int main(){
 	stack<int> a,s,b;
-	bool output[7*Max];			//TrueÎªpush²Ù×÷£¬FalseÎªpop²Ù×÷ 
+	bool output[7*Max];			//Trueä¸ºpushæ“ä½œï¼ŒFalseä¸ºpopæ“ä½œ 
 	int m,n,t;
-	int k;						//Êä³ö 
+	int k;						//è¾“å‡º 
 	cin>>n>>m;
-	for(int i=n;i!=0;--i) 		//Ä¬ÈÏÕ»A=<1£¬2£¬3£¬4£¬5£¬...] 
+	for(int i=n;i!=0;--i) 		//é»˜è®¤æ ˆA=<1ï¼Œ2ï¼Œ3ï¼Œ4ï¼Œ5ï¼Œ...] 
 	{
 		a.push(i);
 	}
-	for(int i=n;i!=0;--i)		//ÅĞ¶ÏÊÇ·ñÎªÕ»»ìÏ´µÄĞòÁĞ
+	for(int i=n;i!=0;--i)		//åˆ¤æ–­æ˜¯å¦ä¸ºæ ˆæ··æ´—çš„åºåˆ—
 	{
 		cin>>t;
 		b.push(t);
 	}
-	stack_reverse(b);							//Õ»µÄ·­×ª 
+	stack_reverse(b);				//æ ˆçš„ç¿»è½¬ 
 	for(int i=n;i>=0;--i)		
-	{										 	//ÈôÕ»AºÍÕ»BµÄÕ»¶¥ÏàÍ¬£¬Ö´ĞĞÈ¡³öAÕ»¶¥·ÅÈëSÕ»ÖĞ£¬È»ºóÅĞ¶ÏSÊÇ·ñ±¬Õ»£¬ÈôÎ´£¬ÔòÖ´ĞĞÒ»´Îpop²Ù×÷£»
-		if(!a.empty()&&(a.top()==b.top()))	 	//Ê¹ÓÃtop()º¯Êı±ØĞëÈ·¶¨¸ÃÕ»²»ÄÜÎª¿Õ£¬·ñÔò»á³öÏÖ´íÎó£» 
+	{						//è‹¥æ ˆAå’Œæ ˆBçš„æ ˆé¡¶ç›¸åŒï¼Œæ‰§è¡Œå–å‡ºAæ ˆé¡¶æ”¾å…¥Sæ ˆä¸­ï¼Œç„¶ååˆ¤æ–­Sæ˜¯å¦çˆ†æ ˆï¼Œè‹¥æœªï¼Œåˆ™æ‰§è¡Œä¸€æ¬¡popæ“ä½œï¼›
+		if(!a.empty()&&(a.top()==b.top()))	//ä½¿ç”¨top()å‡½æ•°å¿…é¡»ç¡®å®šè¯¥æ ˆä¸èƒ½ä¸ºç©ºï¼Œå¦åˆ™ä¼šå‡ºç°é”™è¯¯ï¼› 
 		{
 			s.push(a.top());	
-			if(s.size()>m)						//ÈôSÕ»±¬Õ»£¬Ö±½ÓÍË³ö 
+			if(s.size()>m)			//è‹¥Sæ ˆçˆ†æ ˆï¼Œç›´æ¥é€€å‡º 
 			{
 				cout<<"No";
 				return 0;
