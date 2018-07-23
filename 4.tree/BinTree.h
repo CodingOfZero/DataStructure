@@ -170,8 +170,8 @@ template <typename T> vector<T> BinTree<T>::levelorder_Traversal(BinNodePosi(T) 
 	vector<T> output;
 	Q.push(x);
 	while (!Q.empty()) {
-		Q.pop(x);
-		visit();
+		x=Q.front();
+		Q.pop(); 
 		if (HasLChild(*x)) Q.push(x->lc);
 		if (HasRChild(*x)) Q.push(x->lc);
 	}
