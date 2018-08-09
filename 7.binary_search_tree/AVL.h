@@ -24,7 +24,7 @@ template<typename T> BinNodePosi(T) AVL<T>::insert(const T& e) {
 		}
 		else
 			updateHeight(g);//更新其高度（即便g未失衡，高度亦可能增加）
-	}
+	}//至多只需一次调整；若果真做过调整，则全树高度必然复原 
 	return xx;
 }
 template<typename T> bool AVL<T>::remove(const T& e) {//从AVL树中删除关键码e
@@ -35,7 +35,7 @@ template<typename T> bool AVL<T>::remove(const T& e) {//从AVL树中删除关键码e
 		if (!AvlBalanced(*g))//g失衡，采用（3+4算法）使之复衡，并将该子树联至原父亲
 			g= FromParentTo(*g) = rotateAt(tallerChild(tallerChild(g)));
 		updateHeight(g);//更新其高度（即便g未失衡，高度亦可能降低）
-	}
+	}//可能做O(logn)次调整--无论是否做过调整，全树高度均可能降低 
 	return true;
 }
 
