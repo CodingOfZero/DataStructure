@@ -1,10 +1,10 @@
-typedef enum{UNDISCOVERED,DISCOVERED,VISITED}VStatus;//顶点状态
-typedef enum{UNDETERMINED,TREE,CROSS,FORWARD,BACKWARD}Etype;//边在遍历树中所属类型
+typedef enum { UNDISCOVERED, DISCOVERED, VISITED }VStatus;//顶点状态
+typedef enum { UNDETERMINED, TREE, CROSS, FORWARD, BACKWARD }Etype;//边在遍历树中所属类型
 #include<stack>
 #include<queue>
 using std::queue;
 using std::stack;
-template<typename Tv,typename Te>
+template<typename Tv, typename Te>
 class Graph {
 private:
 	void reset() {//所有顶点、边的辅助信息复位
@@ -23,23 +23,27 @@ public:
 	int n;
 	virtual int insert(Tv const&) = 0;
 	virtual Tv remove(int) = 0;
+	//顶点v的数据，入度，出度
+	virtual Tv vertex(int) = 0;
 	virtual int inDegree(int) = 0;
 	virtual int outDegree(int) = 0;
+	//顶点v的首个邻接顶点、相对于顶点u的下一邻接顶点、状态以及在遍历树中的父亲
 	virtual int firstNbr(int) = 0;
-	virtual int nextNbr(int,int) = 0;
+	virtual int nextNbr(int, int) = 0;
 	virtual VStatus& status(int) = 0;
+	virtual int& parent(int) = 0;
+	//顶点v的时间标签以及优先级数
 	virtual int& dTime(int) = 0;
 	virtual int& fTime(int) = 0;
-	virtual int& parent(int) = 0;
 	virtual int& priority(int) = 0;
 	//边
 	int e;
-	virtual bool exists(int,int) = 0;
-	virtual void insert(Te const& ,int,int,int) = 0;
-	virtual Te remove(int,int) = 0;
-	virtual Etype& type(int,int) = 0;
-	virtual Te& edge(int,int) = 0;
-	virtual int& weight(int,int) = 0;
+	virtual bool exists(int, int) = 0;
+	virtual void insert(Te const&, int, int, int) = 0;
+	virtual Te remove(int, int) = 0;
+	virtual Etype& type(int, int) = 0;
+	virtual Te& edge(int, int) = 0;
+	virtual int& weight(int, int) = 0;
 	//算法
 	void bfs(int);
 	void dfs(int);
@@ -47,8 +51,8 @@ public:
 	void prim(int);
 	void dijkstra(int);
 };
-//广度优先搜索算法(全图)
-template <typename Tv,typename Te> void Graph<Tv,Te>::bfs(int s) {
+//广度优先搜索算法(全图) O(n+e)
+template <typename Tv, typename Te> void Graph<Tv, Te>::bfs(int s) {
 	reset(); int clock = 0; int v = s;
 	do
 		if (status(v) == UNDISCOVERED)
@@ -84,18 +88,56 @@ template<typename Tv, typename Te> void Graph<Tv, Te>::dfs(int s) {
 }
 template<typename Tv, typename Te>void Graph<Tv, Te>::DFS(int v, int& clock) {
 	dTime(v) = ++clock; status(v) = DISCOVERED;
-	for (int u=firstNbr(v);-1<u;u=nextNbr(v,u)) 
+	for (int u = firstNbr(v); -1<u; u = nextNbr(v, u))
 	{
 		switch (status(u))
 		{
-			case UNDISCOVERED://u尚未被发现
-				type(v, u) = TREE; parent(u) = v; DFS(u, clock); break;
-			case DISCOVERED://u已被发现但尚未访问完毕，应属被后代指向的祖先
-				type(v, u) = BACKWARD; break;
-			default://u已访问完毕(VISITED,有向图)，则视承袭关系分为前向边或跨边
-				type(v, u) = (dTime(v) < dTime(u)) ? FORWARD : CROSS; break;
+		case UNDISCOVERED://u尚未被发现
+			type(v, u) = TREE; parent(u) = v; DFS(u, clock); break;
+		case DISCOVERED://u已被发现但尚未访问完毕，应属被后代指向的祖先
+			type(v, u) = BACKWARD; break;
+		default://u已访问完毕(VISITED,有向图)，则视承袭关系分为前向边或跨边
+			type(v, u) = (dTime(v) < dTime(u)) ? FORWARD : CROSS; break;
 		}
 	}
 	status(v) = VISITED;
 	fTime(v) = ++clock;
 }
+//基于DFS的拓扑排序
+template<typename Tv, typename Te>stack<Tv>* Graph<Tv, Te>::tSort(int s) {
+	reset(); int clock = 0; int v = s;
+	stack<Tv>* S = new stack<Tv>;//用栈记录顶点
+	do {
+		if (UNDISCOVERED == status(v))
+			if (!TSort(v, clock, S))//任一连通域非DAG，则不必计算，直接清空栈然后返回空栈S
+			{
+				while (!S.empty())
+					S->pop();
+				break;
+			}
+	} while (s != (v = (++v%n)));
+	return S;//若输入为DAG，则S内各顶点自顶向底排序;否则，S空;
+}
+template<typename Tv, typename Te>bool Graph<Tv, Te>::TSort(int v, int &clock, stack<Tv>* S) {
+	dTime(v) = ++clock; status(v) = DISCOVERED;
+	for (int u = firstNbr(v); -1 < u; u = nextNbr(v, u))
+	{
+		switch (status(u))
+		{
+		case UNDISCOVERED:
+			parent(u) = v; type(v, u) = TREE;
+			if (!TSort(u, clock, S))
+				return false;
+			break;
+		case DISCOVERED://一旦发现后向边（非DAG），则不必深入直接返回报告
+			type(v, u) = BACKWARD;
+			return false;
+		default://VISITED
+			type(v, u) = (dTime(v) < dTime(u)) ? FORWARD : CROSS;
+			break;
+		}
+	}
+	status(v) = VISITED; S->push(vertex(v));
+	return true;
+}
+
