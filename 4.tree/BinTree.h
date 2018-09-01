@@ -119,7 +119,7 @@ template <typename T> vector<T> BinTree<T>::Preorder_Traversal(BinNodePosi(T) x)
 			S.push(x->rc);		//将右孩子入栈
 			x = x->lc;
 		}
-		if (!S.empty())break;	//直到栈空
+		if (S.empty())break;	//直到栈空
 		x = S.top();		//弹出下一批起点
 		S.pop();
 	}
