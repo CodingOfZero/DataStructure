@@ -1,0 +1,76 @@
+package ChapterOne.Three;
+
+import java.util.*;
+
+/**
+ * 计算后缀表达式
+ */
+public class EvaluatePostfix {
+
+    public int Evaluate(List<String> postfix){
+        Stack<Integer> stack=new Stack<>();
+        for(String i:postfix){
+            switch (i){
+                case "+":stack.push(stack.pop()+stack.pop());break;
+                case "*":stack.push(stack.pop()*stack.pop());break;
+                case "-":{
+                    int n=stack.pop();
+                    int m=stack.pop();
+                    stack.push(m-n);
+                    break;
+                }
+                case "/":{
+                    int n=stack.pop();
+                    int m=stack.pop();
+                    stack.push(m/n);
+                    break;
+                }
+                default:stack.push(Integer.parseInt(i));
+            }
+        }
+        return stack.pop();
+    }
+
+
+    /**
+     * 与transform_pipe配合使用
+     * @param postfix
+     */
+    private Stack<Integer> stack_pipe=new Stack<>();
+    public void  Evaluate_pipe(String postfix){
+        switch (postfix){
+            case "+":stack_pipe.push(stack_pipe.pop()+stack_pipe.pop());break;
+            case "*":stack_pipe.push(stack_pipe.pop()*stack_pipe.pop());break;
+            case "-":{
+                int n=stack_pipe.pop();
+                int m=stack_pipe.pop();
+                stack_pipe.push(m-n);
+                break;
+            }
+            case "/":{
+                int n=stack_pipe.pop();
+                int m=stack_pipe.pop();
+                stack_pipe.push(m/n);
+                break;
+            }
+            default:stack_pipe.push(Integer.parseInt(postfix));
+        }
+    }
+    public int getSum(){
+        return stack_pipe.pop();
+    }
+
+    public static void main(String[] args) {
+        Scanner in=new Scanner(System.in);
+        EvaluatePostfix e=new EvaluatePostfix();
+        while (in.hasNext())
+            e.Evaluate_pipe(in.next());
+        System.out.println(e.getSum());
+/*        int i=1;
+        while (in.hasNext()){
+            e.Evaluate_pipe();
+            System.out.println("第"+i+"个算式结果为："+e.getSum());
+            i++;
+        }*/
+    }
+}
